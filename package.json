@@ -4,6 +4,7 @@
   "description": "Fine Cooking Search",
   "main": "index.js",
   "author": "Paul Prescod",
+  "homepage": "https://prescod.github.io/fc-recipe-search",
   "license": "MIT",
   "scripts": {
     "start": "react-scripts start",
