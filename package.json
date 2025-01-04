@@ -5,14 +5,37 @@
   "main": "index.js",
   "author": "Paul Prescod",
   "license": "MIT",
-  "scripts": {},
-  "devDependencies": {},
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
+
+  },
   "dependencies": {
     "core-js": "3",
     "minisearch": "3.0.0",
+    "papaparse": "5.4.1",
     "react": "16.13.1",
     "react-dom": "16.13.1",
-    "unfetch": "4.2.0",
-    "papaparse": "5.4.1"
+    "unfetch": "4.2.0"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "gh-pages": "^6.3.0",
+    "react-scripts": "^5.0.1"
   }
 }
