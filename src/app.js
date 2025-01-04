@@ -1,7 +1,7 @@
 import React from "react";
 import fetch from "unfetch";
 import MiniSearch from "minisearch";
-import Papa from 'papaparse';
+import Papa from "papaparse";
 
 class App extends React.PureComponent {
   constructor(props) {
@@ -9,7 +9,7 @@ class App extends React.PureComponent {
     const miniSearch = new MiniSearch({
       fields: ["page", "recipe"],
       processTerm: (term, _fieldName) =>
-        term.length <= 1 || stopWords.has(term) ? null : term.toLowerCase()
+        term.length <= 1 || stopWords.has(term) ? null : term.toLowerCase(),
     });
     [
       "handleSearchChange",
@@ -20,14 +20,14 @@ class App extends React.PureComponent {
       "setSearchOption",
       "performSearch",
       "setFromYear",
-      "setToYear"
+      "setToYear",
     ].forEach((method) => {
       this[method] = this[method].bind(this);
     });
     this.searchInputRef = React.createRef();
     this.state = {
-      matchingSongs: [],
-      songsById: null,
+      matchingRecipes: [],
+      RecipesById: null,
       searchValue: "",
       ready: false,
       suggestions: [],
@@ -39,14 +39,14 @@ class App extends React.PureComponent {
         prefix: true,
         fields: ["recipe", "page"],
         combineWith: "AND",
-        filter: null
+        filter: null,
       },
-      miniSearch
+      miniSearch,
     };
   }
 
   componentDidMount() {
-    fetch("data.csv") // Replace with your CSV file path
+    fetch("fcdata.csv")
       .then((response) => response.text())
       .then((csvString) => {
         // Parse the CSV data
@@ -54,22 +54,22 @@ class App extends React.PureComponent {
         const records = parsedData.data;
 
         // Map CSV data to the desired format
-        const allSongs = records.map((record, index) => ({
+        const allRecipes = records.map((record, index) => ({
           id: index,
           reference: record.Reference,
-          recipe: record['Recipe/Other'],
+          recipe: record["Recipe/Other"],
           page: record.Page,
         }));
 
-        // Update state with songsById
-        const songsById = allSongs.reduce((byId, song) => {
+        // Update state with RecipesById
+        const recipesById = allRecipes.reduce((byId, song) => {
           byId[song.id] = song;
           return byId;
         }, {});
-        this.setState({ songsById });
+        this.setState({ RecipesById: recipesById });
 
         // Add data to miniSearch
-        return this.state.miniSearch.addAllAsync(allSongs);
+        return this.state.miniSearch.addAllAsync(allRecipes);
       })
       .then(() => {
         this.setState({ ready: true });
@@ -81,10 +81,10 @@ class App extends React.PureComponent {
 
   handleSearchChange({ target: { value } }) {
     this.setState({ searchValue: value });
-    const matchingSongs = value.length > 1 ? this.searchSongs(value) : [];
+    const matchingRecipes = value.length > 1 ? this.searchRecipes(value) : [];
     const selectedSuggestion = -1;
     const suggestions = this.getSuggestions(value);
-    this.setState({ matchingSongs, suggestions, selectedSuggestion });
+    this.setState({ matchingRecipes, suggestions, selectedSuggestion });
   }
 
   handleSearchKeyDown({ which, key, keyCode }) {
@@ -105,33 +105,33 @@ class App extends React.PureComponent {
     } else {
       return;
     }
-    const matchingSongs = this.searchSongs(searchValue);
+    const matchingRecipes = this.searchRecipes(searchValue);
     this.setState({
       suggestions,
       selectedSuggestion,
       searchValue,
-      matchingSongs
+      matchingRecipes,
     });
   }
 
   handleSuggestionClick(i) {
     let { suggestions } = this.state;
     const searchValue = suggestions[i].suggestion;
-    const matchingSongs = this.searchSongs(searchValue);
+    const matchingRecipes = this.searchRecipes(searchValue);
     this.setState({
       searchValue,
-      matchingSongs,
+      matchingRecipes,
       suggestions: [],
-      selectedSuggestion: -1
+      selectedSuggestion: -1,
     });
   }
 
   handleSearchClear() {
     this.setState({
       searchValue: "",
-      matchingSongs: [],
+      matchingRecipes: [],
       suggestions: [],
-      selectedSuggestion: -1
+      selectedSuggestion: -1,
     });
   }
 
@@ -145,15 +145,15 @@ class App extends React.PureComponent {
         ({ searchOptions }) => ({
           searchOptions: {
             ...searchOptions,
-            [option]: valueOrFn(searchOptions[option])
-          }
+            [option]: valueOrFn(searchOptions[option]),
+          },
         }),
         this.performSearch
       );
     } else {
       this.setState(
         ({ searchOptions }) => ({
-          searchOptions: { ...searchOptions, [option]: valueOrFn }
+          searchOptions: { ...searchOptions, [option]: valueOrFn },
         }),
         this.performSearch
       );
@@ -190,17 +190,17 @@ class App extends React.PureComponent {
     }, this.performSearch);
   }
 
-  searchSongs(query) {
-    const { miniSearch, songsById, searchOptions } = this.state;
+  searchRecipes(query) {
+    const { miniSearch, RecipesById, searchOptions } = this.state;
     return miniSearch
       .search(query, searchOptions)
-      .map(({ id }) => songsById[id]);
+      .map(({ id }) => RecipesById[id]);
   }
 
   performSearch() {
     const { searchValue } = this.state;
-    const matchingSongs = this.searchSongs(searchValue);
-    this.setState({ matchingSongs });
+    const matchingRecipes = this.searchRecipes(searchValue);
+    this.setState({ matchingRecipes });
   }
 
   getSuggestions(query) {
@@ -214,14 +214,14 @@ class App extends React.PureComponent {
 
   render() {
     const {
-      matchingSongs,
+      matchingRecipes,
       searchValue,
       ready,
       suggestions,
       selectedSuggestion,
       searchOptions,
       fromYear,
-      toYear
+      toYear,
     } = this.state;
     return (
       <div className="App" onClick={this.handleAppClick}>
@@ -242,8 +242,8 @@ class App extends React.PureComponent {
           ) : (
             <Loader />
           )}
-          {matchingSongs && matchingSongs.length > 0 ? (
-            <SongList songs={matchingSongs} />
+          {matchingRecipes && matchingRecipes.length > 0 ? (
+            <SongList Recipes={matchingRecipes} />
           ) : (
             ready && <Explanation />
           )}
@@ -253,9 +253,9 @@ class App extends React.PureComponent {
   }
 }
 
-const SongList = ({ songs }) => (
+const SongList = ({ Recipes }) => (
   <ul className="SongList">
-    {songs.map(({ id, ...props }) => (
+    {Recipes.map(({ id, ...props }) => (
       <Song {...props} key={id} />
     ))}
   </ul>
@@ -292,7 +292,7 @@ const SearchBox = ({
   setFromYear,
   setToYear,
   fromYear,
-  toYear
+  toYear,
 }) => (
   <div className="SearchBox">
     <div className="Search">
@@ -347,18 +347,20 @@ const AdvancedOptions = ({
   setFromYear,
   setToYear,
   fromYear,
-  toYear
+  toYear,
 }) => {
-  const setField = (field) => ({ target: { checked } }) => {
-    setOption("fields", (fields) => {
-      return checked ? [...fields, field] : fields.filter((f) => f !== field);
-    });
-  };
-  const setKey = (key, trueValue = true, falseValue = false) => ({
-    target: { checked }
-  }) => {
-    setOption(key, checked ? trueValue : falseValue);
-  };
+  const setField =
+    (field) =>
+    ({ target: { checked } }) => {
+      setOption("fields", (fields) => {
+        return checked ? [...fields, field] : fields.filter((f) => f !== field);
+      });
+    };
+  const setKey =
+    (key, trueValue = true, falseValue = false) =>
+    ({ target: { checked } }) => {
+      setOption(key, checked ? trueValue : falseValue);
+    };
   const { fields, combineWith, fuzzy, prefix } = options;
   return (
     <details className="AdvancedOptions">
