@@ -59,11 +59,13 @@ class App extends React.PureComponent {
           reference: record.Reference,
           recipe: record["Recipe/Other"],
           page: record.Page,
+          issue: record.Volume,
+          issueName: record["Issue Name"],
         }));
 
         // Update state with RecipesById
-        const recipesById = allRecipes.reduce((byId, song) => {
-          byId[song.id] = song;
+        const recipesById = allRecipes.reduce((byId, recipe) => {
+          byId[recipe.id] = recipe;
           return byId;
         }, {});
         this.setState({ RecipesById: recipesById });
@@ -243,7 +245,7 @@ class App extends React.PureComponent {
             <Loader />
           )}
           {matchingRecipes && matchingRecipes.length > 0 ? (
-            <SongList Recipes={matchingRecipes} />
+            <RecipeList Recipes={matchingRecipes} />
           ) : (
             ready && <Explanation />
           )}
@@ -253,20 +255,22 @@ class App extends React.PureComponent {
   }
 }
 
-const SongList = ({ Recipes }) => (
-  <ul className="SongList">
+const RecipeList = ({ Recipes }) => (
+  <ul className="RecipeList">
     {Recipes.map(({ id, ...props }) => (
-      <Song {...props} key={id} />
+      <Recipe {...props} key={id} />
     ))}
   </ul>
 );
 
-const Song = ({ recipe, page, reference }) => (
-  <li className="Song">
+const Recipe = ({ recipe, page, reference, issue, issueName }) => (
+  <li className="Recipe">
     <h3>{capitalize(recipe)}</h3>
     <dl>
-      <dt>Issue:</dt> <dd>{reference}</dd>
+      <dt>Issue:</dt> <dd>{issue}</dd>
       <dt>Page:</dt> <dd>{capitalize(page)}</dd>
+      <dt>Reference:</dt> <dd>{capitalize(reference)}</dd>
+      <dt>Issue Name:</dt> <dd>{capitalize(issueName)}</dd>
     </dl>
   </li>
 );
