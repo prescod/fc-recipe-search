@@ -1,13 +1,13 @@
 {
   "files": {
     "main.css": "/fc-recipe-search/static/css/main.6b695928.css",
-    "main.js": "/fc-recipe-search/static/js/main.b461297c.js",
+    "main.js": "/fc-recipe-search/static/js/main.e9df963b.js",
     "index.html": "/fc-recipe-search/index.html",
     "main.6b695928.css.map": "/fc-recipe-search/static/css/main.6b695928.css.map",
-    "main.b461297c.js.map": "/fc-recipe-search/static/js/main.b461297c.js.map"
+    "main.e9df963b.js.map": "/fc-recipe-search/static/js/main.e9df963b.js.map"
   },
   "entrypoints": [
     "static/css/main.6b695928.css",
-    "static/js/main.b461297c.js"
+    "static/js/main.e9df963b.js"
   ]
 }
