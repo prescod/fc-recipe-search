@@ -13,7 +13,6 @@
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
-
   },
   "dependencies": {
     "core-js": "3",
@@ -37,6 +36,6 @@
   },
   "devDependencies": {
     "gh-pages": "^6.3.0",
-    "react-scripts": "^5.0.1"
+    "react-scripts": "^0.0.0"
   }
 }
